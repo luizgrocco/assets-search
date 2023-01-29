@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Asset {
+  id                String   @id @unique
+  identifier        String
+  assetType         String
+  label             String
+  label_ai_ci       String?
+  cnpj              String?
+  hasSeries         Boolean?
+  ticker            String?
+  isin              String?
+  isin_ci           String?
+  managementCompany String?
+  situation         String?
+  stockExchange     String?
+  type              String?
+}
