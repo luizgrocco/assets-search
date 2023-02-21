@@ -9,13 +9,15 @@ export class AssetsService {
     return this.prisma.asset.findMany();
   }
 
-  search(query: string) {
+  search(query: string, page: number) {
     const normalizedString = query
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase();
     const normalizedCNPJ = query.replace(/[.-]/g, '');
     return this.prisma.asset.findMany({
+      skip: 30 * page,
+      take: 30,
       where: {
         OR: [
           { label_ai_ci: { contains: normalizedString } },
