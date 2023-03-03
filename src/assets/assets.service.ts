@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { groupBy, prop } from 'ramda';
 
 @Injectable()
 export class AssetsService {
@@ -25,5 +26,22 @@ export class AssetsService {
         ],
       },
     });
+  }
+
+  async groupedSearch(query: string) {
+    const normalizedString = query
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+    const normalizedCNPJ = query.replace(/[.-]/g, '');
+    const matchingAssets = await this.prisma.asset.findMany({
+      where: {
+        OR: [
+          { label_ai_ci: { contains: normalizedString } },
+          { cnpj: { contains: normalizedCNPJ } },
+        ],
+      },
+    });
+    return groupBy(prop('assetType'), matchingAssets);
   }
 }
